@@ -1,35 +1,29 @@
 package bowling;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class Bowling {
 
-    private static final int MAX_FRAMES_PER_GAME = 10;
-    private ArrayList<Frame> frames;
     private Frame currentFrame;
 
     int computeScore(String line) {
-        frames = new ArrayList<>();
-        convertLineToFrames(line);
-
-        return frames.stream()
-                .filter(frame -> !frame.isBonusFrame())
-                .reduce(0, (score, frame) -> score + frame.getFrameScore(), Integer::sum);
+        return convertLineToFrames(line)
+                .stream()
+                .reduce(0, (score, frame) -> score + (int) frame.getPins(), Integer::sum);
     }
 
-    private void convertLineToFrames(String line) {
+    private List<Frame> convertLineToFrames(String line) {
+        List<Frame> frames = new ArrayList<Frame>();
         for (String roll : line.split("")) {
-            currentFrame().addRoll(roll);
+            currentFrame(frames).addRoll(roll);
         }
+        return frames;
     }
 
-    private Frame currentFrame() {
-        if (currentFrame == null) {
-            currentFrame = new Frame(false);
-            frames.add(currentFrame);
-        }
-        if (currentFrame.isFinished()) {
-            currentFrame = currentFrame.newFrame(frames.size() >= MAX_FRAMES_PER_GAME);
+    private Frame currentFrame(List<Frame> frames) {
+        if ((currentFrame == null) || (currentFrame.isFinished())) {
+            currentFrame = new Frame();
             frames.add(currentFrame);
         }
         return currentFrame;
