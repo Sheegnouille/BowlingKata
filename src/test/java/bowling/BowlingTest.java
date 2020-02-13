@@ -31,6 +31,6 @@ public class BowlingTest {
                 PERFECT_GAME, FIVE_SPARE_EVERY_FRAME, NINE_SPARE_EVERY_FRAME,
                 STRIKE_ZERO_SPARE})
     public void given_a_game_should_return_score(String line, int score) {
-        assertThat(Bowling.computeScore(line)).isEqualTo(score);
+        assertThat(new Bowling().computeScore(line)).isEqualTo(score);
     }
 }

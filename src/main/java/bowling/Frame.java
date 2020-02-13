@@ -2,44 +2,44 @@ package bowling;
 
 import java.util.ArrayList;
 
-public class Frame {
+class Frame {
     private ArrayList<Integer> rolls = new ArrayList<>();
     private Frame nextFrame;
     private boolean bonusFrame;
 
-    public Frame(boolean isBonusFrame) {
+    Frame(boolean isBonusFrame) {
         bonusFrame = isBonusFrame;
     }
 
-    public Frame getNextFrame() {
+    private Frame getNextFrame() {
         return nextFrame;
     }
 
-    public boolean hasNextFrame() {
+    private boolean hasNextFrame() {
         return nextFrame != null;
     }
 
-    public boolean isBonusFrame() {
+    boolean isBonusFrame() {
         return bonusFrame;
     }
 
-    public Integer getPins() {
+    private Integer getPins() {
         return rolls.stream().reduce(Integer::sum).orElse(0);
     }
 
-    public Integer getFirstRoll() {
+    private Integer getFirstRoll() {
         return rolls.get(0);
     }
 
-    public boolean isFinished() {
+    boolean isFinished() {
         return getPins() == 10 || rolls.size() == 2;
     }
 
-    public boolean isStrike() {
+    private boolean isStrike() {
         return rolls.size() == 1 && getPins() == 10;
     }
 
-    public boolean isSpare() {
+    private boolean isSpare() {
         return rolls.size() == 2 && getPins() == 10;
     }
 
@@ -61,8 +61,37 @@ public class Frame {
         this.rolls.add(rollValue);
     }
 
-    public Frame newFrame(boolean isBonusFrame) {
+    Frame newFrame(boolean isBonusFrame) {
         nextFrame = new Frame(isBonusFrame);
         return nextFrame;
+    }
+
+    private int calculateStrikeBonus() {
+        Frame nextFrame = getNextFrame();
+        if (nextFrame.isStrike()) {
+            Frame secondNextFrame = nextFrame.getNextFrame();
+            return nextFrame.getFirstRoll() +
+                    secondNextFrame.getFirstRoll();
+        }
+        return nextFrame.getPins();
+    }
+
+    private int calculateSpareBonus() {
+        if (hasNextFrame()) {
+            return getNextFrame().getFirstRoll();
+        }
+        return 0;
+    }
+
+    int getFrameScore() {
+        int frameScore;
+        frameScore = getPins();
+        if (isSpare()) {
+            frameScore += calculateSpareBonus();
+        }
+        if (isStrike()) {
+            frameScore += calculateStrikeBonus();
+        }
+        return frameScore;
     }
 }
