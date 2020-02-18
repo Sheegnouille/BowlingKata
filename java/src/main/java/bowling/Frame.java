@@ -28,7 +28,10 @@ class Frame {
     }
 
     private Integer getFirstRoll() {
-        return rolls.get(0);
+        if (rolls.size() > 0) {
+            return rolls.get(0);
+        }
+        return 0;
     }
 
     boolean isFinished() {
