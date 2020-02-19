@@ -29,10 +29,14 @@ class Bowling {
             frames.add(currentFrame);
         }
         if (currentFrame.isFinished()) {
-            currentFrame = currentFrame.newFrame(frames.size() >= MAX_FRAMES_PER_GAME);
+            currentFrame = currentFrame.newFrame(isMaxFrameReached());
             frames.add(currentFrame);
         }
         return currentFrame;
+    }
+
+    private boolean isMaxFrameReached() {
+        return frames.size() >= MAX_FRAMES_PER_GAME;
     }
 
 }

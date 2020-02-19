@@ -3,6 +3,8 @@ package bowling;
 import java.util.ArrayList;
 
 class Frame {
+    public static final int MAX_PINS_PER_FRAME = 10;
+    public static final int MAX_ROLLS_PER_FRAME = 2;
     private ArrayList<Integer> rolls = new ArrayList<>();
     private Frame nextFrame;
     private boolean bonusFrame;
@@ -35,33 +37,36 @@ class Frame {
     }
 
     boolean isFinished() {
-        return getPins() == 10 || rolls.size() == 2;
+        return allPinsFell() || rolls.size() == MAX_ROLLS_PER_FRAME;
+    }
+
+    private boolean allPinsFell() {
+        return getPins() == MAX_PINS_PER_FRAME;
     }
 
     private boolean isStrike() {
-        return rolls.size() == 1 && getPins() == 10;
+        return rolls.size() == 1 && allPinsFell();
     }
 
     private boolean isSpare() {
-        return rolls.size() == 2 && getPins() == 10;
+        return rolls.size() == MAX_ROLLS_PER_FRAME && allPinsFell();
     }
 
     void addRoll(String roll) {
-        int rollValue;
+        rolls.add(translate(roll));
+    }
+
+    private int translate(String roll) {
         switch (roll) {
-            case "X" :
-                rollValue = 10;
-                break;
-            case "/" :
-                rollValue = 10 - getPins();
-                break;
-            case "-" :
-                rollValue = 0;
-                break;
+            case "X":
+                return MAX_PINS_PER_FRAME;
+            case "/":
+                return MAX_PINS_PER_FRAME - getPins();
+            case "-":
+                return 0;
             default:
-                rollValue = Integer.parseInt(roll);
+                return Integer.parseInt(roll);
         }
-        this.rolls.add(rollValue);
     }
 
     Frame newFrame(boolean isBonusFrame) {
@@ -87,14 +92,12 @@ class Frame {
     }
 
     int getFrameScore() {
-        int frameScore;
-        frameScore = getPins();
         if (isSpare()) {
-            frameScore += calculateSpareBonus();
+            return getPins() + calculateSpareBonus();
         }
         if (isStrike()) {
-            frameScore += calculateStrikeBonus();
+            return getPins() + calculateStrikeBonus();
         }
-        return frameScore;
+        return getPins();
     }
 }
